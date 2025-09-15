@@ -59,9 +59,7 @@ const reader = new kafka.Reader({
 export function producer() {
     const messages = [];
     for (let i = 0; i < messageBatchSize; i++) {
-        const key = b64encode(`key-${__VU}-${__ITER}-${i}`);
-        const value = b64encode(`value-${__VU}-${__ITER}-${i}`);
-        messages.push({ key, value });
+        messages.push(generateMessage());
     }
 
     try {
@@ -95,4 +93,37 @@ export function consumer() {
 export function teardown() {
     writer.close();
     reader.close();
+}
+
+function generateMessage() {
+    const getRandomItem = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+    const cdns = ['Akamai', 'Cloudflare', 'Fastly', 'CloudFront'];
+    const platforms = ['dotcom', 'mobile', 'ctv'];
+    const channels = ['sports', 'news', 'movies', 'series', 'live'];
+    const asns = ['AS15169', 'AS7922', 'AS3356', 'AS16509'];
+    const profiles = [720, 1200, 2800, 4500, 6000];
+
+    const jwtPayload = {
+        sessionID: `sid-${Date.now()}-${Math.random().toString(36).substring(2, 10)}`,
+        platform: getRandomItem(platforms),
+        channel: getRandomItem(channels),
+        asn: getRandomItem(asns),
+    };
+
+    const mockJwtHeader = b64encode(JSON.stringify({ alg: 'HS256', typ: 'JWT' }), 'url');
+    const mockJwtPayload = b64encode(JSON.stringify(jwtPayload), 'url');
+    const mockJwtSignature = 'fake-signature-for-load-test';
+    const jwtToken = `${mockJwtHeader}.${mockJwtPayload}.${mockJwtSignature}`;
+
+    const finalMessage = {
+        currentCDN: getRandomItem(cdns),
+        lastObservedVideoProfile: getRandomItem(profiles),
+        jwtToken: jwtToken,
+    };
+
+    return {
+        key: b64encode(`key-${__VU}-${__ITER}`),
+        value: b64encode(JSON.stringify(finalMessage)),
+    };
 }

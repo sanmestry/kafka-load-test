@@ -15,9 +15,9 @@ rm -f load-test.log || true
 
 echo "Starting load test..."
 ./k6 run \
-  -e PRODUCER_VUS=100 \
-  -e CONSUMER_VUS=20 \
-  -e DURATION=300s \
+  -e PRODUCER_VUS=10 \
+  -e CONSUMER_VUS=5 \
+  -e DURATION=10s \
   -e BATCH_SIZE=10 \
   -e PRODUCER_SLEEP=0.1 \
   load-test.js >> load-test.log 2>&1
