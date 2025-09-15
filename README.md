@@ -5,7 +5,6 @@ This project provides a simple, configurable load test for Apache Kafka using k6
 ## Repository Layout
 - load-test.js — k6 script using xk6-kafka to produce/consume messages
 - load-test.sh — helper script to run the test with common parameters
-- k6/ — optional folder for k6-related assets (if any)
 
 ## Prerequisites
 - Kafka broker accessible at localhost:9092 by default, or update the script to point to your brokers
